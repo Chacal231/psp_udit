@@ -3,7 +3,15 @@ package org.example;
 import java.util.ArrayList;// Herramientas nativas para listas
 
 public class Main {
+
+
     public static void main(String[] args) {
+
+        Plataforma plataforma = new Plataforma(new ArrayList<>());
+            plataforma.agregarEpisodio(null);
+            plataforma.procesarCatalogo();
+
+        }/*
         System.out.println("--- INICIANDO UDITVERSUM ---");
 
         ArrayList<Episodio> catalogo = new ArrayList<>();
@@ -30,5 +38,9 @@ public class Main {
         long totalSegundos = (fin - inicio) / 1000;
 
         System.out.println("Tiempo total: " + totalSegundos + " segundos de bloqueo. ");
+        */
+
+
     }
-}
+
+
