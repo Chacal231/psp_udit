@@ -4,7 +4,8 @@ package org.example;
 import java.io.IOException;
 
 public class LanzadorProcesos {
-    public static void main(String[] args) {
+    public static void main(String[] args) { /*
+
         System.out.println("Solicitando al SO la creacion de un proceso");
 
         //1. ProcessBuilder es el puente entre Java y el Sistema Operativo
@@ -26,6 +27,6 @@ public class LanzadorProcesos {
         }catch (InterruptedException e){
             System.out.println("Error: el proceso fue interrumpido bruscamente");
 
-        }
+        } */
     }
 }
