@@ -18,8 +18,8 @@ public class Plataforma {
         catalogo.add(new Episodio ("Episodio5" ,10));
     }
     public void procesarCatalogo() {
-        for(Episodio e : catalogo) {
-            e.procesar();
+        for(Episodio ep : catalogo) {
+            ep.procesar();
         }
     }
 }
