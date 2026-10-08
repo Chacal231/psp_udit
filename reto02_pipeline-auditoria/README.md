@@ -1,7 +1,7 @@
 # Reto 2 · Pipeline de Auditoría UDITversum (Fase 1)
 
 **Módulo:** 0490 · Programación de Servicios y Procesos
-**Autor/a:** *(tu nombre)*
+**Autor/a:** *Daniel Baeza*
 **Tecnología:** Java + `ProcessBuilder` (procesos del sistema operativo)
 **RA vinculado:** RA1 · Programación de aplicaciones compuestas por varios procesos
 
@@ -43,7 +43,8 @@ Un programa de consola que simula la **primera fase de una auditoría de UDITver
 
 *(Ajusta el esquema y los nombres a lo que hace realmente tu programa.)*
 
-📸 **Sustituye esto por una captura de tu propia ejecución antes de entregar.**
+📸 **<img width="1800" height="667" alt="image" src="https://github.com/user-attachments/assets/ae61c62d-dd6e-40fb-8e0b-a83b828c2f9f" />
+**
 
 ---
 
@@ -52,30 +53,31 @@ Un programa de consola que simula la **primera fase de una auditoría de UDITver
 Responde **antes** de escribir una sola línea de código. No importa si te equivocas: lo importante es dejar escrito qué pensabas.
 
 **Con mis palabras, ¿qué me pide el reto?** *(sin copiar el enunciado)*
-*(escribe aquí)*
+*(El reto me pide lanzar 2 procesos en paralelo y esperar los códigos de salida. Si ambos devuelven 0 se tiene que abrir el Bloc de Notas y si alguno de los 2 procesos falla deberá abrirse la calculadora.)*
 
 **¿Qué parte del Reto 1 voy a reutilizar tal cual?**
-*(escribe aquí)*
+*Reutilizaré tal cual como se crean los Procesos.*
 
 **¿Qué es nuevo respecto al Reto 1 y me da más respeto?**
-*(escribe aquí)*
+*Respecto al Reto 1 lo nuevo que hemos implementado es el uso de el if y el else para decidir si se abre la calculadora o el Bloc de Notas.*
 
 **Mi plan en 4-5 pasos, en orden:**
-1. *(escribe aquí)*
-2. *(escribe aquí)*
-3. *(escribe aquí)*
-4. *(escribe aquí)*
+1. *Crear los Procesos*
+2. *Comienzo el proceso con .start()*
+3. *Esperar con el waitFor() al segundo proceso para que los 2 sean paralelos*
+4. *Comparo los procesos.*
+5. *Mostrar por pantalla el resultado de los procesos y abrir la respectiva app, calculadora o bloc de notas.*
 
 **Predicciones** *(comprueba al final si acertaste)*
 
 | Escenario | ¿Qué código de salida espero en cada ping? | ¿Qué aplicación se abre? |
 |---|---|---|
-| Los dos pings a `127.0.0.1` | *(escribe aquí)* | *(escribe aquí)* |
-| Un ping válido y otro a una dirección inexistente | *(escribe aquí)* | *(escribe aquí)* |
-| Los dos pings a direcciones inexistentes | *(escribe aquí)* | *(escribe aquí)* |
+| Los dos pings a `127.0.0.1` | *0 y 0* | *Bloc de Notas* |
+| Un ping válido y otro a una dirección inexistente | *0 y 1* | *Calculadora* |
+| Los dos pings a direcciones inexistentes | *1 y 1* | *Calculadora* |
 
 **Predicción de tiempo:** si cada ping tarda unos 3 segundos, ¿cuánto tardará mi programa en total si los lanzo en paralelo? ¿Y si los lanzara uno detrás de otro?
-*(escribe aquí)*
+*En paralelo tardarían 3 segundos y uno detrás de otro tardaría 6 segundos*
 
 ---
 
@@ -97,18 +99,18 @@ Dar el salto de **gestionar un proceso tras otro** (Reto 1) a **coordinar varios
 
 | Componente / concepto | Para qué se usa en esta app | Con mis palabras |
 |---|---|---|
-| `ProcessBuilder` | Prepara la orden que se enviará al sistema operativo (ping, notepad, calc) | |
-| `start()` | Lanza de verdad el proceso y **devuelve el control enseguida**, sin esperar | |
-| `Process` | Objeto con el que controlo cada proceso ya en marcha | |
-| `waitFor()` | Bloquea mi programa hasta que ese proceso termina y devuelve su código de salida | |
-| Código de salida (`int`) | Dice cómo terminó el proceso: `0` = éxito, distinto de `0` = fallo | |
-| `&&` (AND) | Se cumple solo si **las dos** condiciones son verdaderas | |
-| `\|\|` (OR) | Se cumple si **al menos una** condición es verdadera | |
-| `try/catch` | Captura errores que Java no puede evitar (el SO no encuentra el programa, etc.) | |
-| `InterruptedException` | Excepción que obliga a gestionar `waitFor()` por si el hilo es interrumpido | |
+| `ProcessBuilder` | Prepara la orden que se enviará al sistema operativo (ping, notepad, calc) | | Prepara los procesos
+| `start()` | Lanza de verdad el proceso y **devuelve el control enseguida**, sin esperar | | Comienza los procesos
+| `Process` | Objeto con el que controlo cada proceso ya en marcha | | Controla lo que está en marcha
+| `waitFor()` | Bloquea mi programa hasta que ese proceso termina y devuelve su código de salida | | Espera a los procesos para devolver el código de salida 
+| Código de salida (`int`) | Dice cómo terminó el proceso: `0` = éxito, distinto de `0` = fallo | |  Código que dice si el proceso termina de manera exitosa o no
+| `&&` (AND) | Se cumple solo si **las dos** condiciones son verdaderas | | Condición lógica que se cumple cuando las dos son true
+| `\|\|` (OR) | Se cumple si **al menos una** condición es verdadera | | Condición lógica que se cumple cuando una de las dos es true
+| `try/catch` | Captura errores que Java no puede evitar (el SO no encuentra el programa, etc.) | | Comprueba los errores 
+| `InterruptedException` | Excepción que obliga a gestionar `waitFor()` por si el hilo es interrumpido | | Excepción que obliga a gestionar waitFor()
 
 **¿Cómo se llaman mis dos objetos `Process` y qué lanza cada uno?**
-*(escribe aquí)*
+*(Se llaman p1 y p2 y lanzan o una calculadora o un bloc de notas.)*
 
 ---
 
@@ -147,13 +149,13 @@ Completa con **tu** lógica real (la del enunciado):
 
 | Código ping A | Código ping B | ¿Ping A OK? | ¿Ping B OK? | Condición (`&&` / `\|\|`) | Aplicación que abro |
 |---|---|---|---|---|---|
-| 0 | 0 | | | | |
-| 0 | ≠ 0 | | | | |
-| ≠ 0 | 0 | | | | |
-| ≠ 0 | ≠ 0 | | | | |
+| 0 | 0 | Sí | Sí | && | Bloc de Notas |
+| 0 | ≠ 0 | Sí | No | \|\| | Calculadora|
+| ≠ 0 | 0 | No | Sí | \|\| | Calculadora |
+| ≠ 0 | ≠ 0 | No | No | && | Calculadora |
 
 **¿Cambiaría el resultado de alguna fila si cambiara `&&` por `||`? ¿En cuáles?**
-*(escribe aquí)*
+*(Sí, con el && la 2 y la 3 cambian)*
 
 ---
 
@@ -163,7 +165,7 @@ Completa con **tu** lógica real (la del enunciado):
 2. Esperar a que indexe el proyecto.
 3. Ejecutar (▶) la clase principal.
 
-⚠️ **Dependencia del sistema operativo:** `ping` usa `-n` en Windows y `-c` en Linux/Mac, y `notepad.exe` / `calc.exe` solo existen en Windows. Indica con qué sistema lo has probado: *(escribe aquí)*
+⚠️ **Dependencia del sistema operativo:** `ping` usa `-n` en Windows y `-c` en Linux/Mac, y `notepad.exe` / `calc.exe` solo existen en Windows. Indica con qué sistema lo has probado: *(Con Windows)*
 
 ---
 
@@ -174,9 +176,8 @@ Cada vez que te atasques, cambies de idea o algo falle, anota una entrada. Tres 
 | Qué intentaba | Qué pasó realmente | Qué hice / qué aprendí |
 |---|---|---|
 | *(ejemplo)* Que los dos pings corrieran a la vez | El programa tardaba el doble de lo esperado | Me di cuenta de que había puesto un `waitFor()` entre los dos `start()` y... |
-| | | |
-| | | |
-| | | |
+| Que se abriera la app correcta | Se abría la Calculadora aunque los dos pings iban bien | Había puesto || en lugar de &&. Corregí la condición. |
+
 
 **Mi pregunta-brújula cuando me bloqueo:**
 1. ¿Qué espero que haga esta línea?
