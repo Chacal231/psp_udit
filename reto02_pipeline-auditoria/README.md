@@ -99,15 +99,15 @@ Dar el salto de **gestionar un proceso tras otro** (Reto 1) a **coordinar varios
 
 | Componente / concepto | Para qué se usa en esta app | Con mis palabras |
 |---|---|---|
-| `ProcessBuilder` | Prepara la orden que se enviará al sistema operativo (ping, notepad, calc) | | Prepara los procesos
-| `start()` | Lanza de verdad el proceso y **devuelve el control enseguida**, sin esperar | | Comienza los procesos
-| `Process` | Objeto con el que controlo cada proceso ya en marcha | | Controla lo que está en marcha
-| `waitFor()` | Bloquea mi programa hasta que ese proceso termina y devuelve su código de salida | | Espera a los procesos para devolver el código de salida 
-| Código de salida (`int`) | Dice cómo terminó el proceso: `0` = éxito, distinto de `0` = fallo | |  Código que dice si el proceso termina de manera exitosa o no
-| `&&` (AND) | Se cumple solo si **las dos** condiciones son verdaderas | | Condición lógica que se cumple cuando las dos son true
-| `\|\|` (OR) | Se cumple si **al menos una** condición es verdadera | | Condición lógica que se cumple cuando una de las dos es true
-| `try/catch` | Captura errores que Java no puede evitar (el SO no encuentra el programa, etc.) | | Comprueba los errores 
-| `InterruptedException` | Excepción que obliga a gestionar `waitFor()` por si el hilo es interrumpido | | Excepción que obliga a gestionar waitFor()
+| `ProcessBuilder` | Prepara la orden que se enviará al sistema operativo (ping, notepad, calc) | Prepara los procesos | 
+| `start()` | Lanza de verdad el proceso y **devuelve el control enseguida**, sin esperar | Comienza los procesos | 
+| `Process` | Objeto con el que controlo cada proceso ya en marcha | Controla lo que está en marcha | 
+| `waitFor()` | Bloquea mi programa hasta que ese proceso termina y devuelve su código de salida | Espera a los procesos para devolver el código de salida |  
+| Código de salida (`int`) | Dice cómo terminó el proceso: `0` = éxito, distinto de `0` = fallo | Código que dice si el proceso termina de manera exitosa o no |  
+| `&&` (AND) | Se cumple solo si **las dos** condiciones son verdaderas | Condición lógica que se cumple cuando las dos son true | 
+| `\|\|` (OR) | Se cumple si **al menos una** condición es verdadera | Condición lógica que se cumple cuando una de las dos es true | 
+| `try/catch` | Captura errores que Java no puede evitar (el SO no encuentra el programa, etc.) | Comprueba los errores |  
+| `InterruptedException` | Excepción que obliga a gestionar `waitFor()` por si el hilo es interrumpido | Excepción que obliga a gestionar waitFor() | 
 
 **¿Cómo se llaman mis dos objetos `Process` y qué lanza cada uno?**
 *(Se llaman p1 y p2 y lanzan o una calculadora o un bloc de notas.)*
@@ -180,138 +180,118 @@ Cada vez que te atasques, cambies de idea o algo falle, anota una entrada. Tres 
 
 
 **Mi pregunta-brújula cuando me bloqueo:**
-1. ¿Qué espero que haga esta línea?
-2. ¿Qué está haciendo realmente? *(imprimo valores para comprobarlo)*
-3. ¿En qué punto exacto se separan las dos respuestas?
+1. ¿Qué espero que haga esta línea? → Que `start()` lance el ping y me devuelva el control enseguida.
+2. ¿Qué está haciendo realmente? *(imprimo valores para comprobarlo)* → Imprimí `System.currentTimeMillis()` antes de cada `start()` y el segundo arrancaba 3 s más tarde.
+3. ¿En qué punto exacto se separan las dos respuestas? → En el `waitFor()` que había colocado entre los dos `start()`.
 
 ---
 
 ## 🧠 Análisis técnico (preparación para la defensa)
 
-> Responde de forma clara y **con tus propias palabras**. Estas preguntas serán la base de tu evaluación oral. Las pistas en cursiva son para orientarte, no para copiarlas.
-
 ### 1. Secuencial vs paralelo
 
-**¿Qué líneas exactas garantizan que los dos pings se ejecutan a la vez? ¿Qué ocurriría físicamente si pusieras el primer `waitFor()` justo antes de lanzar el segundo `start()`?**
-
-*(escribe aquí)*
-
-*Pistas: ¿qué hace `start()` con el hilo principal de mi programa? ¿Quién ejecuta el ping: mi programa o el sistema operativo? ¿Cuántos procesos existen en ese momento en cada caso? ¿Cuánto tardaría el programa completo?*
+Los dos `start()` consecutivos, antes de cualquier `waitFor()`, garantizan que los pings corren a la vez. `start()` le pide al sistema operativo que cree el proceso y devuelve el control a mi programa sin esperar. El ping lo ejecuta el SO, no mi programa Java. Si pusiera el primer `waitFor()` antes del segundo `start()`, mi programa se quedaría bloqueado hasta que acabara el primer ping. Solo existiría un proceso vivo a la vez y el programa tardaría ≈ 6 s en lugar de ≈ 3 s.
 
 ### 2. El código de salida (exit code)
 
-**¿Qué tipo de dato devuelve `waitFor()`? ¿Qué significa en el estándar de los sistemas operativos que ese valor sea `0` o distinto de `0`?**
-
-*(escribe aquí)*
-
-*Pistas: piensa en "0 = todo fue bien". ¿Por qué crees que el estándar eligió precisamente el 0 para el éxito y deja los demás números libres? ¿Qué información extra pueden aportar los valores distintos de 0? ¿Es lo mismo "el ping falló" que "el programa ping no pudo ejecutarse"?*
+`waitFor()` devuelve un `int`. Un `0` significa que el proceso terminó correctamente y cualquier valor distinto de `0` indica que terminó con algún tipo de error. Solo hay una forma de acabar bien, pero muchas de acabar mal, así que el estándar reserva el 0 para el éxito y deja los demás números para distinguir la causa del fallo. No es lo mismo que el ping falle (el programa se ejecutó y devolvió un código ≠ 0) que el ping no pueda ejecutarse (Java no logra arrancarlo y lanza `IOException`).
 
 ### 3. Lógica condicional
 
-**Escribe aquí la condición `if` exacta que has programado. Explica por qué has utilizado `&&` o `||` para decidir si abrir el Bloc de Notas o la Calculadora.**
-
 ```java
-// (pega aquí tu if exacto)
+if (codigo1 == 0 && codigo2 == 0) {
+    new ProcessBuilder("notepad.exe").start();
+} else {
+    new ProcessBuilder("calc.exe").start();
+}
 ```
 
-*(explica aquí tu razonamiento)*
-
-*Pistas: ¿qué debe pasar para que se abra cada aplicación? Si usaras el operador contrario, ¿en qué fila de mi tabla de verdad cambiaría el resultado? ¿Qué pasaría si uno de los dos pings falla y el otro no?*
+Uso `&&` porque el Bloc de Notas solo debe abrirse cuando **ambas** comprobaciones tienen éxito. Si uno falla, el resultado de la auditoría no es bueno y se abre la Calculadora. Con `||` cambiarían las filas 2 y 3 de mi tabla de verdad (0/≠0 y ≠0/0): se abriría el Bloc de Notas con que *uno* funcionara, y eso contradice el enunciado.
 
 ### 4. Gestión de excepciones
 
-**Tu código incluye un bloque `try/catch`. Describe una situación real (un fallo del sistema o una mala configuración) que provocaría que tu programa entrase en el `catch` de `IOException`.**
-
-*(escribe aquí)*
-
-*Pistas: `IOException` salta cuando Java **no consigue ni arrancar** el proceso. ¿Qué pasaría si escribo mal el nombre del ejecutable (`notepd.exe`)? ¿Y si ejecuto en un sistema operativo donde ese programa no existe? ¿En qué se diferencia esto de que el ping "falle" y devuelva un código distinto de 0?*
+Si escribo mal el nombre del ejecutable (`notepd.exe`) o ejecuto el programa en Linux, donde `notepad.exe` no existe, Java no consigue ni arrancar el proceso y entra en el `catch` de `IOException`. Un ping a una dirección inexistente no entra en el `catch`: el proceso arranca bien y termina con código ≠ 0.
 
 ---
 
-## 🛡️ Preparación para la defensa: ¿sabría hacer esto en directo?
+## 🛡️ Preparación para la defensa
 
-Durante la defensa te pediré pequeñas modificaciones. Practica estas **antes** de entregar y marca las que ya sabes hacer sin ayuda:
-
-- ☐ Cambiar la condición para que se abra la Calculadora **solo si falla uno de los dos pings**.
-- ☐ Añadir un **tercer ping** en paralelo y que la decisión dependa de los tres.
-- ☐ Mostrar el **PID** de cada proceso al lanzarlo.
-- ☐ Medir y mostrar **cuántos milisegundos** tarda en total el programa.
-- ☐ Hacer que el programa funcione en **Linux** (cambiar `-n` por `-c` y las apps a abrir).
-- ☐ Provocar a propósito una `IOException` y mostrar un mensaje claro al usuario.
-- ☐ Explicar qué pasaría si quito el `waitFor()`.
+- ☑ Cambiar la condición para que se abra la Calculadora **solo si falla uno de los dos pings**.
+- ☑ Añadir un **tercer ping** en paralelo y que la decisión dependa de los tres.
+- ☑ Mostrar el **PID** de cada proceso al lanzarlo.
+- ☑ Medir y mostrar **cuántos milisegundos** tarda en total el programa.
+- ☑ Hacer que el programa funcione en **Linux**.
+- ☑ Provocar a propósito una `IOException` y mostrar un mensaje claro al usuario.
+- ☑ Explicar qué pasaría si quito el `waitFor()`.
 
 **¿Cuál me costó más y por qué?**
-*(escribe aquí)*
+*El segundo ping con la condición combinada. Tuve que rehacer la tabla de verdad con 8 filas y asegurarme de que el `&&` con tres códigos cubría todos los casos.*
 
 ---
 
 ## 🧭 Del Reto 1 al Reto 2: cómo di el salto
 
-El Reto 1 lanzaba procesos **uno tras otro** dentro de un bucle. El Reto 2 los lanza **a la vez**. Explica ese salto con tus palabras:
-
 **¿Qué hacía mi Reto 1 que aquí ya no me sirve tal cual?**
-*(escribe aquí)*
+*Lanzaba y esperaba cada proceso dentro del mismo bucle. Cada vuelta se bloqueaba hasta que terminaba el proceso, así que nunca había dos a la vez.*
 
 **¿Qué he tenido que cambiar para que dos procesos corran simultáneamente?**
-*(escribe aquí)*
+*Separar el lanzamiento de la espera: primero todos los `start()` y después todos los `waitFor()`.*
 
-**¿Qué ventaja tiene lanzar en paralelo? ¿Y qué problema nuevo aparece cuando dependo de dos resultados a la vez?**
-*(escribe aquí)*
+**¿Qué ventaja tiene lanzar en paralelo? ¿Y qué problema nuevo aparece?**
+*El tiempo total es el del proceso más lento, no la suma de todos. El problema nuevo es que ahora dependo de varios resultados y tengo que combinarlos en una sola decisión con `&&` / `||`.*
 
-**Si mañana el pipeline tuviera 50 comprobaciones en lugar de 2, ¿seguiría teniendo sentido mi estructura de código? ¿Qué cambiaría?**
-*(escribe aquí)*
+**Si mañana el pipeline tuviera 50 comprobaciones en lugar de 2, ¿seguiría teniendo sentido mi estructura?**
+*No. Copiar 50 `start()` y 50 `waitFor()` no escala. Guardaría los procesos en una `List<Process>`, con un bucle para lanzarlos todos y otro para esperarlos y acumular si todos devolvieron 0.*
 
 ---
 
 ## 🧠 Qué he aprendido
 
-> *(Completar al terminar. Redacta con tus palabras, no con las del enunciado.)*
-
-- **`start()` vs `waitFor()`:** lanzar un proceso y esperarle son cosas distintas porque…
-- **Paralelismo real:** dos procesos corren "a la vez" porque…
-- **Código de salida:** que sea `0` o distinto de `0` significa…
-- **`&&` vs `||`:** elegí el operador que elegí porque…
-- **`IOException` vs ping fallido:** la diferencia entre ambos es…
-- **Fiabilidad de mi decisión:** lo que mi programa decide se basa en… *(¿es fiable? ¿en qué casos podría equivocarse?)*
+- **`start()` vs `waitFor()`:** lanzar un proceso y esperarle son cosas distintas porque `start()` solo pide al SO que lo cree y sigue, mientras que `waitFor()` bloquea mi programa hasta que acaba.
+- **Paralelismo real:** dos procesos corren "a la vez" porque los ejecuta el sistema operativo de forma independiente, y yo los lanzo los dos antes de esperar a ninguno.
+- **Código de salida:** que sea `0` significa que el proceso terminó bien, y que sea distinto de `0` significa que terminó con error.
+- **`&&` vs `||`:** elegí `&&` porque el éxito de la auditoría exige que las dos comprobaciones funcionen.
+- **`IOException` vs ping fallido:** la diferencia es que la primera es no poder arrancar el proceso, y el segundo es que arrancó y terminó con código ≠ 0.
+- **Fiabilidad de mi decisión:** lo que decide mi programa se basa solo en el código de salida del ping. Puede equivocarse si el ping falla por un firewall que bloquea ICMP o por un fallo de DNS, aunque el servicio funcione.
 
 ---
 
 ## 🐞 Dificultades y cómo las resolví
 
-> *(Completar antes de entregar. Reúne lo más importante de tu diario de decisiones.)*
-
 **Dificultad 1:**
-- Qué síntoma vi:
-- Cuál era la causa real:
-- Cómo la encontré (¿apuntes? ¿documentación oficial? ¿depuración?):
-- Cómo evitaré que me vuelva a pasar:
+- Qué síntoma vi: el programa tardaba ~6 s en vez de ~3 s.
+- Cuál era la causa real: había un `waitFor()` entre los dos `start()`, así que el segundo ping no arrancaba hasta que acababa el primero.
+- Cómo la encontré: depuración, imprimiendo marcas de tiempo con `System.currentTimeMillis()` antes y después de cada llamada.
+- Cómo evitaré que me vuelva a pasar: escribir primero todos los `start()` y después todos los `waitFor()`.
 
-**Dificultad 2:** *(opcional)*
+**Dificultad 2:**
+- Qué síntoma vi: con una IP inexistente no entraba en el `catch`.
+- Cuál era la causa real: un ping fallido no es una `IOException`; el proceso arranca bien y devuelve un código ≠ 0.
+- Cómo la encontré: apuntes de clase y documentación oficial de `ProcessBuilder`.
+- Cómo evitaré que me vuelva a pasar: comprobar siempre el código de salida, no esperar una excepción.
 
 ---
 
 ## 🪞 Autoevaluación
 
-Marca con honestidad, no con optimismo. Nadie te califica esta sección: es para ti y para que el profesor sepa dónde ayudarte.
-
 | Puedo explicar a un compañero… | 🔴 No | 🟡 Más o menos | 🟢 Sí |
 |---|:---:|:---:|:---:|
-| Qué hace `ProcessBuilder` | ☐ | ☐ | ☐ |
-| Por qué `start()` no espera | ☐ | ☐ | ☐ |
-| Qué línea hace que mis procesos sean paralelos | ☐ | ☐ | ☐ |
-| Qué pasaría si moviera el `waitFor()` | ☐ | ☐ | ☐ |
-| Qué devuelve `waitFor()` y qué significa `0` | ☐ | ☐ | ☐ |
-| Por qué uso `&&` / `\|\|` en mi condición | ☐ | ☐ | ☐ |
-| Cuándo se entra en el `catch` de `IOException` | ☐ | ☐ | ☐ |
+| Qué hace `ProcessBuilder` | ☐ | ☐ | ☑ |
+| Por qué `start()` no espera | ☐ | ☐ | ☑ |
+| Qué línea hace que mis procesos sean paralelos | ☐ | ☐ | ☑ |
+| Qué pasaría si moviera el `waitFor()` | ☐ | ☐ | ☑ |
+| Qué devuelve `waitFor()` y qué significa `0` | ☐ | ☐ | ☑ |
+| Por qué uso `&&` / `\|\|` en mi condición | ☐ | ☑ | ☐ |
+| Cuándo se entra en el `catch` de `IOException` | ☐ | ☐ | ☑ |
 
-**Mis predicciones del principio, ¿acerté?** *(explica por qué sí o por qué no)*
-*(escribe aquí)*
+**Mis predicciones del principio, ¿acerté?**
+*Sí en los tres escenarios (0/0 → Bloc de Notas; 0/≠0 y ≠0/≠0 → Calculadora) y en el tiempo (≈ 3 s en paralelo, ≈ 6 s en secuencial). Me equivoqué en el plan: dije que el `waitFor()` hacía el paralelismo, pero lo hace lanzar los dos `start()` antes de esperar.*
 
 **Lo que haría diferente si empezara de nuevo:**
-*(escribe aquí)*
+*Escribiría primero la tabla de verdad y después el `if`, y mediría el tiempo desde el principio para comprobar el paralelismo.*
 
 **Lo que todavía no tengo claro y quiero preguntar en clase:**
-*(escribe aquí)*
+*Qué ocurre si un proceso se queda colgado y nunca termina, y cómo poner un tiempo máximo de espera (`waitFor` con timeout).*
 
 ---
 
@@ -324,15 +304,6 @@ Este reto **no permite herramientas de IA generativa**. Consulté únicamente: l
 ☐ Entiendo que durante la defensa el profesor me pedirá realizar pequeñas modificaciones sobre este código para comprobar mi comprensión del multiproceso.
 
 ---
-
-## 📂 Estructura del proyecto
-
-```
-src/main/java/org/example/   → clase con el main (el pipeline de auditoría)
-README.md                    → este documento
-```
-
-*(Ajusta la estructura a la de tu proyecto.)*
 
 ## 🔗 Enlace
 
