@@ -299,12 +299,12 @@ Si escribo mal el nombre del ejecutable (`notepd.exe`) o ejecuto el programa en 
 
 Este reto **no permite herramientas de IA generativa**. Consulté únicamente: los apuntes de clase, la documentación oficial de Java e IntelliJ IDEA.
 
-☐ Confirmo que he diseñado, programado y depurado este código aplicando mi propio razonamiento, y que puedo explicarlo línea a línea.
+☑ Confirmo que he diseñado, programado y depurado este código aplicando mi propio razonamiento, y que puedo explicarlo línea a línea.
 
-☐ Entiendo que durante la defensa el profesor me pedirá realizar pequeñas modificaciones sobre este código para comprobar mi comprensión del multiproceso.
+☑ Entiendo que durante la defensa el profesor me pedirá realizar pequeñas modificaciones sobre este código para comprobar mi comprensión del multiproceso.
 
 ---
 
 ## 🔗 Enlace
 
-GitHub: *(tu repositorio)*
+GitHub: *(https://github.com/Chacal231/psp_udit)*
