@@ -305,6 +305,18 @@ Este reto **no permite herramientas de IA generativa**. Consulté únicamente: l
 
 ---
 
+## 🔁 Reto B · Tolerancia a Fallos (Patrón Retry)
+
+### 1. Mundo real: ¿qué sistemas profesionales usan el patrón Retry?
+
+*El patrón Retry se utiliza en muchos sistemas profesionales, como servicios en la nube (por ejemplo, AWS), APIs y pasarelas de pago. Sirve para volver a intentar una operación cuando falla por un problema temporal de conexión o disponibilidad. En nuestro programa hemos utilizado este patrón realizando hasta 3 reintentos, esperando 1 segundo entre cada uno. Esto permite comprobar si el problema se soluciona antes de dar la operación por fallida. 2. Refl*
+
+### 2. Reflexión sobre mis tiempos: con 50 servidores con problemas de conexión, ¿por qué es importante limitar los reintentos?
+
+*Si tuviéramos que auditar 50 servidores con problemas de conexión, los tiempos de espera de los reintentos se acumularían y el proceso podría tardar demasiado.
+
+Por eso es importante limitar los reintentos. Así evitamos perder tiempo intentando continuamente una operación que probablemente seguirá fallando y conseguimos que el programa sea más eficiente*
+
 ## 🔗 Enlace
 
 GitHub: *(https://github.com/Chacal231/psp_udit)*
