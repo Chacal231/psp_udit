@@ -1,0 +1,19 @@
+[MAIN] Procesadores disponibles: 1
+[MAIN] Descargando 4 módulos en paralelo...
+--> [DL-catalogo] prio=10 latencia=3848 ms
+--> [DL-sesion] prio=10 latencia=1494 ms
+--> [DL-portadas] prio=5 latencia=3159 ms
+--> [DL-analitica] prio=1 latencia=3627 ms
+... [DL-sesion] prio=10 cálculo=1480 ms resultado=-282129374951571615
+<-- [DL-sesion] prio=10 LISTO (duración=2976 ms)
+... [DL-catalogo] prio=10 cálculo=4627 ms resultado=-282129374951571615
+<-- [DL-catalogo] prio=10 LISTO (duración=8477 ms)
+... [DL-portadas] prio=5 cálculo=9103 ms resultado=-282129374951571615
+<-- [DL-portadas] prio=5 LISTO (duración=12266 ms)
+... [DL-analitica] prio=1 cálculo=10625 ms resultado=-282129374951571615
+<-- [DL-analitica] prio=1 LISTO (duración=16930 ms)
+[MAIN] Todos los módulos listos -> LOGIN HABILITADO
+Tiempo total real: ≈ 16932 ms / Duración del más lento: 16930 ms / Suma de todas las latencias: 12128 ms
+Suma de duraciones reales (latencia + cálculo): 40649 ms
+Comparación: total real ≈ más lento (diferencia 2 ms) y no la suma (diferencia 23717 ms)
+Orden de finalización: sesion-y-perfil -> catalogo-metadatos -> portadas-assets -> analiticas
